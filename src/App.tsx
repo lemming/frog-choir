@@ -2,20 +2,21 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "./index.css";
 // @ts-expect-error
 import backgroundImg from "./assets/background-alt-2.png";
+// @ts-expect-error
 import backgroundHighlightedImg from "./assets/background-alt-2-highlighted.png";
 // @ts-expect-error
 import frogsSpriteImg from "./assets/frogs-sprite.png";
 import { Frog } from "./components/Frog";
 import { Slot } from "./components/Slot";
 import {
-	FROGS,
 	CORRECT_ORDER,
-	SPRITE_SIZE,
 	DISPLAY_SIZE,
+	FROGS,
 	SCALE,
+	SPRITE_SIZE,
 } from "./constants";
 import type { FrogMelody } from "./types";
-import { playFrogMelody, playCompleteTheme } from "./utils/audio";
+import { playCompleteTheme, playFrogMelody } from "./utils/audio";
 
 export function App() {
 	const [gameStarted, setGameStarted] = useState(false);
@@ -142,21 +143,26 @@ export function App() {
 
 		setSlots((prev) => {
 			const newSlots = [...prev];
-			// Remove frog from any existing slot
+			// Find if frog is currently in a slot
 			const existingIndex = newSlots.findIndex(
 				(slot) => slot?.id === draggedFrog.id,
 			);
-			if (existingIndex !== -1) {
-				newSlots[existingIndex] = null;
-			}
 
-			if (hoveredSlot !== null) {
+			// Only make changes if dropping on a different slot
+			if (hoveredSlot !== null && hoveredSlot !== existingIndex) {
+				// Remove frog from any existing slot
+				if (existingIndex !== -1) {
+					newSlots[existingIndex] = null;
+				}
+
 				// Place frog in new slot (swap if occupied)
 				const existingFrog = newSlots[hoveredSlot];
 				if (existingFrog && existingIndex !== -1) {
 					newSlots[existingIndex] = existingFrog;
 				}
 				newSlots[hoveredSlot] = draggedFrog;
+			} else if (hoveredSlot === null && existingIndex === -1) {
+				// Frog was from available area and dropped outside slots - no change needed
 			}
 			return newSlots;
 		});
@@ -168,17 +174,35 @@ export function App() {
 	// Check win condition whenever slots change
 	useEffect(() => {
 		const currentOrder = slots.map((slot) => slot?.id || null);
-		const isCorrect =
-			currentOrder.every((id) => id !== null) &&
-			currentOrder.every((id, index) => id === CORRECT_ORDER[index]);
 
-		if (isCorrect && !hasWon) {
+		// Check if all slots are filled
+		const allSlotsFilled = currentOrder.every((id) => id !== null);
+
+		// Compare melodies: get the notes sequence for current order vs correct order
+		const getMelodyNotes = (frogIds: (string | null)[]) => {
+			return frogIds
+				.filter((id): id is string => id !== null)
+				.flatMap((id) => {
+					const frog = FROGS.find((f) => f.id === id);
+					return frog ? frog.notes.map((n) => n.note) : [];
+				});
+		};
+
+		const currentMelody = getMelodyNotes(currentOrder);
+		const correctMelody = getMelodyNotes(CORRECT_ORDER);
+
+		// Check if melodies match (same notes in same order)
+		const melodiesMatch =
+			currentMelody.length === correctMelody.length &&
+			currentMelody.every((note, i) => note === correctMelody[i]);
+
+		if (allSlotsFilled && melodiesMatch && !hasWon) {
 			setHasWon(true);
 			setShowCelebration(true);
 
-			// Play the complete theme
+			// Play the complete theme 33% faster
 			setTimeout(() => {
-				playCompleteTheme();
+				playCompleteTheme(1.33);
 			}, 500);
 		}
 	}, [slots, hasWon]);
@@ -379,7 +403,7 @@ export function App() {
 						<button
 							type="button"
 							className="play-theme-btn"
-							onClick={() => playCompleteTheme()}
+							onClick={() => playCompleteTheme(1.33)}
 						>
 							Play Theme Again 🎵
 						</button>

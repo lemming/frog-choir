@@ -1,8 +1,8 @@
 import { useRef } from "react";
-import { FrogMelody } from "../types";
-import { SPRITE_SIZE, DISPLAY_SIZE, SCALE } from "../constants";
 // @ts-expect-error
 import frogsSpriteImg from "../assets/frogs-sprite.png";
+import { DISPLAY_SIZE, SCALE, SPRITE_SIZE } from "../constants";
+import type { FrogMelody } from "../types";
 
 interface FrogProps {
 	frog: FrogMelody;

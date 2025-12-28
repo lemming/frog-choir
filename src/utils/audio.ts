@@ -1,5 +1,5 @@
-import { NOTE_FREQUENCIES, HEDWIGS_THEME } from "../constants";
-import { FrogMelody } from "../types";
+import { HEDWIGS_THEME, NOTE_FREQUENCIES } from "../constants";
+import type { FrogMelody } from "../types";
 
 // Audio context for Web Audio API
 let audioContext: AudioContext | null = null;
@@ -47,11 +47,12 @@ export const playFrogMelody = (frog: FrogMelody) => {
 	});
 };
 
-export const playCompleteTheme = () => {
+export const playCompleteTheme = (speedMultiplier: number = 1) => {
 	let currentDelay = 0;
 	HEDWIGS_THEME.forEach(({ note, duration }) => {
 		const freq = NOTE_FREQUENCIES[note];
-		if (freq) playNote(freq, duration, currentDelay);
-		currentDelay += duration + 0.05;
+		const adjustedDuration = duration / speedMultiplier;
+		if (freq) playNote(freq, adjustedDuration, currentDelay);
+		currentDelay += adjustedDuration + 0.05 / speedMultiplier;
 	});
 };

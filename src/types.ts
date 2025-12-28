@@ -1,8 +1,12 @@
-export interface FrogMelody {
+export interface FrogConfig {
 	id: string;
 	name: string;
 	color: string;
 	scarfColor: string;
-	notes: { note: string; duration: number; delay: number }[];
+	notesCount: number;
 	spriteIndex: number;
+}
+
+export interface FrogMelody extends FrogConfig {
+	notes: { note: string; duration: number; delay: number }[];
 }
