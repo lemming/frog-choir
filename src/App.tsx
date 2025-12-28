@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "./index.css";
 // @ts-expect-error
-import backgroundImg from "./assets/background-alt-2.png";
+import backgroundHighlightedImg from "./assets/background-alt-2.png";
 // @ts-expect-error
-import backgroundHighlightedImg from "./assets/background-alt-2-highlighted.png";
+import backgroundImg from "./assets/background-alt-2-highlighted.png";
 // @ts-expect-error
 import frogsSpriteImg from "./assets/frogs-sprite.png";
 import { Frog } from "./components/Frog";
@@ -148,8 +148,8 @@ export function App() {
 				(slot) => slot?.id === draggedFrog.id,
 			);
 
-			// Only make changes if dropping on a different slot
 			if (hoveredSlot !== null && hoveredSlot !== existingIndex) {
+				// Dropping on a different slot
 				// Remove frog from any existing slot
 				if (existingIndex !== -1) {
 					newSlots[existingIndex] = null;
@@ -161,9 +161,12 @@ export function App() {
 					newSlots[existingIndex] = existingFrog;
 				}
 				newSlots[hoveredSlot] = draggedFrog;
-			} else if (hoveredSlot === null && existingIndex === -1) {
-				// Frog was from available area and dropped outside slots - no change needed
+			} else if (hoveredSlot === null && existingIndex !== -1) {
+				// Frog was in a slot and dropped outside - remove it from slot
+				newSlots[existingIndex] = null;
 			}
+			// If hoveredSlot === existingIndex, frog stays in same slot (no change)
+			// If hoveredSlot === null && existingIndex === -1, frog was from available area (no change)
 			return newSlots;
 		});
 
@@ -302,18 +305,33 @@ export function App() {
 			{/* Available frogs area */}
 			<div className="frogs-area">
 				<div className="frogs-container">
-					{availableFrogs.map((frog) => (
-						<Frog
-							key={frog.id}
-							frog={frog}
-							onClick={() => handleFrogClick(frog)}
-							onDragStart={handleDragStart}
-							onDragMove={handleDragMove}
-							onDragEnd={handleDragEnd}
-							isSinging={singingFrogId === frog.id}
-							isDragging={draggedFrog?.id === frog.id}
-						/>
-					))}
+					{FROGS.map((frog) => {
+						const isInSlot = slots.some((slot) => slot?.id === frog.id);
+						if (isInSlot) {
+							// Render empty placeholder to maintain layout
+							return (
+								<div
+									key={frog.id}
+									style={{
+										width: `${DISPLAY_SIZE}px`,
+										height: `${DISPLAY_SIZE}px`,
+									}}
+								/>
+							);
+						}
+						return (
+							<Frog
+								key={frog.id}
+								frog={frog}
+								onClick={() => handleFrogClick(frog)}
+								onDragStart={handleDragStart}
+								onDragMove={handleDragMove}
+								onDragEnd={handleDragEnd}
+								isSinging={singingFrogId === frog.id}
+								isDragging={draggedFrog?.id === frog.id}
+							/>
+						);
+					})}
 				</div>
 			</div>
 

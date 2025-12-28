@@ -376,7 +376,8 @@ body {
   max-width: calc((100% - 20%) / 5);
   height: 100%;
   border: 3px solid transparent;
-  border-radius: 15px;
+  border-bottom: none;
+  border-radius: 15px 15px 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
