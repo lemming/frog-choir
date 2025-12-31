@@ -1,8 +1,8 @@
 import { useRef } from "react";
-import type { FrogMelody } from "../types";
-import { SPRITE_SIZE, DISPLAY_SIZE, SCALE } from "../constants";
 // @ts-expect-error
 import frogsSpriteImg from "../assets/frogs-sprite.png";
+import { DISPLAY_SIZE, SCALE, SPRITE_SIZE } from "../constants";
+import type { FrogMelody } from "../types";
 
 interface SlotProps {
 	index: number;
@@ -41,25 +41,32 @@ export const Slot = ({
 		hasMoved.current = false;
 		startPos.current = { x: e.clientX, y: e.clientY };
 		(e.target as HTMLElement).setPointerCapture(e.pointerId);
-		onDragStart(frog, e.clientX, e.clientY);
+		// Don't start drag immediately - wait until user actually moves
 	};
 
 	const handlePointerMove = (e: React.PointerEvent) => {
-		if (!isDraggingRef.current) return;
+		if (!isDraggingRef.current || !frog) return;
 		const dx = Math.abs(e.clientX - startPos.current.x);
 		const dy = Math.abs(e.clientY - startPos.current.y);
 		if (dx > 5 || dy > 5) {
-			hasMoved.current = true;
+			if (!hasMoved.current) {
+				// First time crossing threshold - start the drag
+				hasMoved.current = true;
+				onDragStart(frog, e.clientX, e.clientY);
+			}
+			onDragMove(e.clientX, e.clientY);
 		}
-		onDragMove(e.clientX, e.clientY);
 	};
 
 	const handlePointerUp = (e: React.PointerEvent) => {
 		if (!isDraggingRef.current || !frog) return;
 		isDraggingRef.current = false;
 		(e.target as HTMLElement).releasePointerCapture(e.pointerId);
-		onDragEnd();
-		if (!hasMoved.current) {
+		if (hasMoved.current) {
+			// Only call onDragEnd if user actually dragged
+			onDragEnd();
+		} else {
+			// Just a click - play the frog's melody
 			onFrogClick(frog);
 		}
 	};
