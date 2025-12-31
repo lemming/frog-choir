@@ -34,9 +34,26 @@ export function App() {
 	const [singingFrogId, setSingingFrogId] = useState<string | null>(null);
 	const [hasWon, setHasWon] = useState(false);
 	const [showCelebration, setShowCelebration] = useState(false);
+	const [isPortrait, setIsPortrait] = useState(false);
 	const singingTimeoutRef = useRef<number | null>(null);
 	const gameContainerRef = useRef<HTMLDivElement | null>(null);
 	const slotRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+	// Detect portrait orientation
+	useEffect(() => {
+		const checkOrientation = () => {
+			setIsPortrait(window.innerHeight > window.innerWidth);
+		};
+
+		checkOrientation();
+		window.addEventListener("resize", checkOrientation);
+		window.addEventListener("orientationchange", checkOrientation);
+
+		return () => {
+			window.removeEventListener("resize", checkOrientation);
+			window.removeEventListener("orientationchange", checkOrientation);
+		};
+	}, []);
 
 	// Check if fullscreen is supported (not on iOS)
 	const isFullscreenSupported =
@@ -74,29 +91,28 @@ export function App() {
 		[enterFullscreen],
 	);
 
-	// Get available frogs (not in slots)
-	const availableFrogs = FROGS.filter(
-		(frog) => !slots.some((slot) => slot?.id === frog.id),
+	const handleFrogClick = useCallback(
+		(frog: FrogMelody) => {
+			if (isPortrait) return;
+			if (singingTimeoutRef.current) {
+				clearTimeout(singingTimeoutRef.current);
+			}
+
+			setSingingFrogId(frog.id);
+			playFrogMelody(frog);
+
+			const maxDuration = Math.max(
+				...frog.notes.map((n) => n.delay + n.duration),
+			);
+			singingTimeoutRef.current = window.setTimeout(
+				() => {
+					setSingingFrogId(null);
+				},
+				maxDuration * 1000 + 200,
+			);
+		},
+		[isPortrait],
 	);
-
-	const handleFrogClick = useCallback((frog: FrogMelody) => {
-		if (singingTimeoutRef.current) {
-			clearTimeout(singingTimeoutRef.current);
-		}
-
-		setSingingFrogId(frog.id);
-		playFrogMelody(frog);
-
-		const maxDuration = Math.max(
-			...frog.notes.map((n) => n.delay + n.duration),
-		);
-		singingTimeoutRef.current = window.setTimeout(
-			() => {
-				setSingingFrogId(null);
-			},
-			maxDuration * 1000 + 200,
-		);
-	}, []);
 
 	// Check which slot the cursor is over
 	const getSlotAtPosition = useCallback(
@@ -122,24 +138,25 @@ export function App() {
 
 	const handleDragStart = useCallback(
 		(frog: FrogMelody, startX: number, startY: number) => {
+			if (isPortrait) return;
 			setDraggedFrog(frog);
 			setDragOffset({ x: DISPLAY_SIZE / 2, y: DISPLAY_SIZE / 2 });
 			setDragPosition({ x: startX, y: startY });
 		},
-		[],
+		[isPortrait],
 	);
 
 	const handleDragMove = useCallback(
 		(x: number, y: number) => {
-			if (!draggedFrog) return;
+			if (isPortrait || !draggedFrog) return;
 			setDragPosition({ x, y });
 			setHoveredSlot(getSlotAtPosition(x, y));
 		},
-		[draggedFrog, getSlotAtPosition],
+		[isPortrait, draggedFrog, getSlotAtPosition],
 	);
 
 	const handleDragEnd = useCallback(() => {
-		if (!draggedFrog) return;
+		if (isPortrait || !draggedFrog) return;
 
 		setSlots((prev) => {
 			const newSlots = [...prev];
@@ -172,7 +189,7 @@ export function App() {
 
 		setDraggedFrog(null);
 		setHoveredSlot(null);
-	}, [draggedFrog, hoveredSlot]);
+	}, [isPortrait, draggedFrog, hoveredSlot]);
 
 	// Check win condition whenever slots change
 	useEffect(() => {
@@ -219,7 +236,7 @@ export function App() {
 	return (
 		<div
 			ref={gameContainerRef}
-			className={`game-container ${draggedFrog ? "dragging-active" : ""}`}
+			className={`game-container ${draggedFrog ? "dragging-active" : ""} ${isPortrait ? "portrait-mode" : ""}`}
 			style={{ backgroundImage: `url(${backgroundImg})` }}
 		>
 			{/* Background highlight overlay for hovered slot */}
@@ -445,6 +462,18 @@ export function App() {
 					</div>
 				))}
 			</div>
+
+			{/* Portrait mode prompt */}
+			{isPortrait && (
+				<div className="portrait-prompt">
+					<div className="portrait-content">
+						<div className="rotate-icon">📱</div>
+						<h2>Please Rotate Your Device</h2>
+						<p>This game is best played in landscape mode</p>
+						<div className="rotate-animation">↻</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

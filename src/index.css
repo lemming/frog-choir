@@ -623,3 +623,74 @@ body {
     animation: none !important;
   }
 }
+
+/* Portrait mode prompt */
+.portrait-prompt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 10, 30, 0.98);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Block all interactions when in portrait mode */
+.game-container.portrait-mode > *:not(.portrait-prompt) {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.portrait-content {
+  text-align: center;
+  padding: 40px;
+  max-width: 300px;
+}
+
+.portrait-content .rotate-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: tilt 1s ease-in-out infinite alternate;
+}
+
+.portrait-content h2 {
+  font-family: "Cinzel", serif;
+  font-size: 1.8rem;
+  color: #ffd700;
+  text-shadow: 0 0 15px #ffd700, 0 0 30px #ff8c00;
+  margin-bottom: 15px;
+}
+
+.portrait-content p {
+  font-size: 1.1rem;
+  color: #b8a990;
+  margin-bottom: 25px;
+}
+
+.rotate-animation {
+  font-size: 3rem;
+  color: #ffd700;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes tilt {
+  from {
+    transform: rotate(-15deg);
+  }
+  to {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
