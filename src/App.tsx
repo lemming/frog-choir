@@ -326,15 +326,7 @@ export function App() {
 						const isInSlot = slots.some((slot) => slot?.id === frog.id);
 						if (isInSlot) {
 							// Render empty placeholder to maintain layout
-							return (
-								<div
-									key={frog.id}
-									style={{
-										width: `${DISPLAY_SIZE}px`,
-										height: `${DISPLAY_SIZE}px`,
-									}}
-								/>
-							);
+							return <div key={frog.id} className="frog" />;
 						}
 						return (
 							<Frog
