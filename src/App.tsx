@@ -268,8 +268,8 @@ export function App() {
 			{!gameStarted && (
 				<div className="start-screen">
 					<div className="start-content">
-						<h1>The Frog Choir</h1>
-						<p className="start-subtitle">A Magical Musical Puzzle</p>
+						<h1>Хор Лягушек</h1>
+						<p className="start-subtitle">Волшебная музыкальная головоломка</p>
 						<div className="start-buttons">
 							{isFullscreenSupported && (
 								<button
@@ -277,7 +277,7 @@ export function App() {
 									className="start-btn fullscreen-btn"
 									onClick={() => startGame(true)}
 								>
-									🖥️ Play Fullscreen
+									🖥️ Играть на полном экране
 								</button>
 							)}
 							<button
@@ -285,12 +285,12 @@ export function App() {
 								className={`start-btn ${isFullscreenSupported ? "windowed-btn" : "fullscreen-btn"}`}
 								onClick={() => startGame(false)}
 							>
-								{isFullscreenSupported ? "Play Windowed" : "🎵 Start Game"}
+								{isFullscreenSupported ? "Играть в окне" : "🎵 Начать игру"}
 							</button>
 						</div>
 						{isFullscreenSupported && (
 							<p className="fullscreen-hint">
-								Fullscreen recommended for the best experience!
+								Рекомендуется полноэкранный режим для лучшего опыта!
 							</p>
 						)}
 					</div>
@@ -316,10 +316,10 @@ export function App() {
 
 			{/* Header */}
 			<header className="game-header">
-				<h1>The Frog Choir</h1>
-				<p>Arrange the frogs to play Hedwig's Theme!</p>
+				<h1>Хор Лягушек</h1>
+				<p>Расставь лягушек так, чтобы получилась мелодия!</p>
 				<p className="hint">
-					Click a frog to hear its part, then drag it to a slot
+					Нажми на лягушку, чтобы услышать её часть мелодии
 				</p>
 			</header>
 
@@ -414,7 +414,7 @@ export function App() {
 									className="play-again-btn"
 									onClick={resetGame}
 								>
-									Play Again 🔄
+									Начать заново 🔄
 								</button>
 							</>
 						) : (
@@ -442,21 +442,21 @@ export function App() {
 									className="get-prize-btn"
 									onClick={() => setShowPrize(true)}
 								>
-									Get Prize 🎁
+									ПРИЗ 🎁
 								</button>
 								<button
 									type="button"
 									className="play-again-btn"
 									onClick={resetGame}
 								>
-									Play Again 🔄
+									Сыграть ещё раз 🔄
 								</button>
 								<button
 									type="button"
 									className="play-theme-btn"
 									onClick={() => playCompleteTheme(1.33)}
 								>
-									Play Theme Again 🎵
+									Проиграть мелодию 🎵
 								</button>
 							</>
 						)}
@@ -486,8 +486,8 @@ export function App() {
 				<div className="portrait-prompt">
 					<div className="portrait-content">
 						<div className="rotate-icon">📱</div>
-						<h2>Please Rotate Your Device</h2>
-						<p>This game is best played in landscape mode</p>
+						<h2>Пожалуйста, поверни устройство</h2>
+						<p>Эта игра лучше всего играется в ландшафтном режиме</p>
 						<div className="rotate-animation">↻</div>
 					</div>
 				</div>
