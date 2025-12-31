@@ -571,6 +571,50 @@ body {
   box-shadow: 0 8px 25px rgba(106, 76, 147, 0.6);
 }
 
+.get-prize-btn {
+  font-family: "Cinzel", serif;
+  font-size: 1.2rem;
+  padding: 15px 30px;
+  margin: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: linear-gradient(to bottom, #50c878, #228b22);
+  color: #fff;
+  box-shadow: 0 5px 15px rgba(80, 200, 120, 0.4);
+}
+
+.get-prize-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(80, 200, 120, 0.6);
+}
+
+.prize-container {
+  margin: 20px 0;
+  animation: prize-reveal 0.5s ease-out;
+}
+
+.prize-image {
+  max-width: 80vw;
+  max-height: 60vh;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5),
+    0 0 60px rgba(255, 215, 0, 0.3);
+  border: 3px solid #ffd700;
+}
+
+@keyframes prize-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Responsive design */
 @media (max-width: 900px) {
   .game-header h1 {

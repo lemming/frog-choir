@@ -6,6 +6,8 @@ import backgroundHighlightedImg from "./assets/background-alt-2.png";
 import backgroundImg from "./assets/background-alt-2-highlighted.png";
 // @ts-expect-error
 import frogsSpriteImg from "./assets/frogs-sprite.png";
+// @ts-expect-error
+import roomImg from "./assets/room.jpeg";
 import { Frog } from "./components/Frog";
 import { Slot } from "./components/Slot";
 import {
@@ -34,6 +36,7 @@ export function App() {
 	const [singingFrogId, setSingingFrogId] = useState<string | null>(null);
 	const [hasWon, setHasWon] = useState(false);
 	const [showCelebration, setShowCelebration] = useState(false);
+	const [showPrize, setShowPrize] = useState(false);
 	const [isPortrait, setIsPortrait] = useState(false);
 	const singingTimeoutRef = useRef<number | null>(null);
 	const gameContainerRef = useRef<HTMLDivElement | null>(null);
@@ -231,6 +234,7 @@ export function App() {
 		setSlots([null, null, null, null, null]);
 		setHasWon(false);
 		setShowCelebration(false);
+		setShowPrize(false);
 	};
 
 	return (
@@ -400,40 +404,62 @@ export function App() {
 			{showCelebration && (
 				<div className="celebration-overlay">
 					<div className="celebration-content">
-						<div className="magic-sparkles">✨ ⭐ ✨ ⭐ ✨</div>
-						<h2>🎵 Magical! 🎵</h2>
-						<p>You've recreated Hedwig's Theme!</p>
-						<div className="celebrating-frogs">
-							{FROGS.map((frog) => (
-								<div key={frog.id} className="celebrating-frog">
-									<div
-										className="frog-sprite"
-										style={{
-											backgroundImage: `url(${frogsSpriteImg})`,
-											backgroundPosition: `-${frog.spriteIndex * SPRITE_SIZE * SCALE}px 0`,
-											backgroundSize: `${SPRITE_SIZE * 5 * SCALE}px ${SPRITE_SIZE * SCALE}px`,
-											width: `${DISPLAY_SIZE}px`,
-											height: `${DISPLAY_SIZE}px`,
-											transform: "scale(0.7)",
-										}}
-									/>
+						{showPrize ? (
+							<>
+								<div className="prize-container">
+									<img src={roomImg} alt="Your Prize" className="prize-image" />
 								</div>
-							))}
-						</div>
-						<button
-							type="button"
-							className="play-again-btn"
-							onClick={resetGame}
-						>
-							Play Again 🔄
-						</button>
-						<button
-							type="button"
-							className="play-theme-btn"
-							onClick={() => playCompleteTheme(1.33)}
-						>
-							Play Theme Again 🎵
-						</button>
+								<button
+									type="button"
+									className="play-again-btn"
+									onClick={resetGame}
+								>
+									Play Again 🔄
+								</button>
+							</>
+						) : (
+							<>
+								<div className="magic-sparkles">✨ ⭐ ✨ ⭐ ✨</div>
+								<div className="celebrating-frogs">
+									{FROGS.map((frog) => (
+										<div key={frog.id} className="celebrating-frog">
+											<div
+												className="frog-sprite"
+												style={{
+													backgroundImage: `url(${frogsSpriteImg})`,
+													backgroundPosition: `-${frog.spriteIndex * SPRITE_SIZE * SCALE}px 0`,
+													backgroundSize: `${SPRITE_SIZE * 5 * SCALE}px ${SPRITE_SIZE * SCALE}px`,
+													width: `${DISPLAY_SIZE}px`,
+													height: `${DISPLAY_SIZE}px`,
+													transform: "scale(0.7)",
+												}}
+											/>
+										</div>
+									))}
+								</div>
+								<button
+									type="button"
+									className="get-prize-btn"
+									onClick={() => setShowPrize(true)}
+								>
+									Get Prize 🎁
+								</button>
+								<button
+									type="button"
+									className="play-again-btn"
+									onClick={resetGame}
+								>
+									Play Again 🔄
+								</button>
+								<button
+									type="button"
+									className="play-theme-btn"
+									onClick={() => playCompleteTheme(1.33)}
+								>
+									Play Theme Again 🎵
+								</button>
+							</>
+						)}
 					</div>
 				</div>
 			)}
